@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infográfico SST | RBM Contabilidade</title>
+  <meta name="description" content="Infográfico de uma página sobre Saúde e Segurança do Trabalho para empresas." />
+  <style>
+    :root {
+      --bg: #efe8dc;
+      --paper: #fffdf8;
+      --soft: #f8f0e3;
+      --soft-2: #f1e3cb;
+      --text: #2c2418;
+      --muted: #6f6558;
+      --gold: #b88732;
+      --gold-dark: #806024;
+      --gold-light: #d7b46a;
+      --brown: #2c2418;
+      --danger: #a83224;
+      --success: #557a37;
+      --border: #e3d3b9;
+      --shadow: 0 22px 70px rgba(44, 36, 24, .20);
+      --radius: 28px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(215, 180, 106, .28), transparent 34%),
+        linear-gradient(180deg, #f8f1e7, #e8ded1 55%, #f5ecdd);
+      line-height: 1.55;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 253, 248, .94);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      padding: 12px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .toolbar strong {
+      color: var(--gold-dark);
+    }
+
+    .toolbar button {
+      margin-left: 12px;
+      border: 1px solid #caa866;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #2c2418;
+      font-weight: 800;
+      border-radius: 999px;
+      padding: 9px 16px;
+      cursor: pointer;
+    }
+
+    .wrap {
+      width: min(1080px, calc(100% - 36px));
+      margin: 30px auto 70px;
+      background: var(--paper);
+      border-radius: 34px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(128, 96, 36, .18);
+    }
+
+    .hero {
+      position: relative;
+      color: #fff;
+      padding: 70px 70px 64px;
+      background:
+        linear-gradient(135deg, rgba(32, 24, 15, .96), rgba(128, 96, 36, .88), rgba(215, 180, 106, .55)),
+        url('https://rbmgroupassessoria.com.br/wp-content/uploads/2025/05/Card-01-rbm-001.webp') center/cover;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 440px;
+      height: 440px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.24);
+      right: -140px;
+      top: -160px;
+    }
+
+    .hero-top {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 30px;
+      margin-bottom: 72px;
+    }
+
+    .logo-box {
+      width: 165px;
+      background: rgba(255, 253, 248, .94);
+      border-radius: 18px;
+      padding: 13px 17px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.22);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(255,255,255,.14);
+      border-radius: 999px;
+      padding: 10px 15px;
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-weight: 900;
+    }
+
+    .hero-main {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 44px;
+      align-items: end;
+    }
+
+    h1, h2, h3 {
+      font-family: Georgia, 'Times New Roman', serif;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(48px, 7vw, 82px);
+      max-width: 680px;
+      text-shadow: 0 8px 28px rgba(0,0,0,.28);
+    }
+
+    .subtitle {
+      margin: 22px 0 0;
+      color: rgba(255,255,255,.92);
+      font-size: 24px;
+      line-height: 1.35;
+      max-width: 680px;
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,.13);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 26px;
+      padding: 28px;
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-card strong {
+      display: block;
+      color: #fff;
+      font-size: 62px;
+      line-height: .95;
+      letter-spacing: -.04em;
+      margin-bottom: 10px;
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    .hero-card span {
+      color: rgba(255,255,255,.88);
+      font-size: 18px;
+      line-height: 1.42;
+    }
+
+    .content {
+      padding: 58px 70px 70px;
+    }
+
+    .section {
+      margin-bottom: 48px;
+    }
+
+    .section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .num {
+      width: 64px;
+      height: 64px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #2c2418;
+      font-weight: 900;
+      font-size: 24px;
+      box-shadow: 0 12px 28px rgba(128, 96, 36, .18);
+    }
+
+    .kicker {
+      color: var(--gold-dark);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    h2 {
+      color: var(--brown);
+      font-size: 42px;
+    }
+
+    h3 {
+      color: var(--brown);
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1.58;
+    }
+
+    .lead {
+      font-size: 23px;
+      color: #4e4335;
+      line-height: 1.52;
+      margin-bottom: 22px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+      min-width: 0;
+    }
+
+    .card.gold {
+      background: linear-gradient(145deg, #fffdf8, #f2e7d4);
+      border-color: #d6bf99;
+    }
+
+    .card.dark {
+      background: linear-gradient(135deg, #2c2418, #806024);
+      color: #fff;
+      border: none;
+      box-shadow: 0 16px 36px rgba(44, 36, 24, .18);
+    }
+
+    .card.dark h3,
+    .card.dark strong {
+      color: #fff !important;
+    }
+
+    .card.dark p,
+    .card.dark li {
+      color: rgba(255,255,255,.9) !important;
+    }
+
+    .icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
+      background: #f2e7d4;
+      border: 1px solid #ddc9a8;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+
+    .card p {
+      font-size: 18px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    ul {
+      margin: 12px 0 0;
+      padding-left: 22px;
+      color: var(--muted);
+      font-size: 18.5px;
+      line-height: 1.55;
+    }
+
+    li {
+      margin: 7px 0;
+    }
+
+    strong {
+      color: var(--text);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .step {
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px 18px;
+      text-align: center;
+    }
+
+    .step b {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      margin: 0 auto 12px;
+      color: #2c2418;
+      font-size: 16px;
+    }
+
+    .step span {
+      display: block;
+      color: var(--text);
+      font-weight: 800;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .doc-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 17px;
+    }
+
+    .doc-table th,
+    .doc-table td {
+      padding: 17px 18px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .doc-table th {
+      background: var(--soft);
+      color: var(--gold-dark);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .doc-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 42px;
+      line-height: 1;
+      color: var(--gold-dark);
+      font-family: Georgia, 'Times New Roman', serif;
+      letter-spacing: -.04em;
+      margin-bottom: 9px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .alert {
+      border-left: 6px solid var(--gold);
+      background: #fff8eb;
+      padding: 22px 24px;
+      border-radius: 22px;
+      margin-top: 22px;
+    }
+
+    .alert p {
+      color: #6c4b16;
+      font-size: 19px;
+      margin: 0;
+    }
+
+    .alert.danger {
+      background: #fff0ed;
+      border-left-color: var(--danger);
+    }
+
+    .alert.danger p {
+      color: #7f241c;
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 13px;
+    }
+
+    .check {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.4;
+    }
+
+    .check::before {
+      content: "✓";
+      width: 30px;
+      height: 30px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: var(--success);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .quote {
+      background: linear-gradient(135deg, #2c2418, #806024, #b88732);
+      color: #fff;
+      border-radius: 28px;
+      padding: 34px 38px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 34px;
+      line-height: 1.2;
+      font-weight: 800;
+      margin: 46px 0;
+      box-shadow: 0 18px 44px rgba(44, 36, 24, .18);
+    }
+
+    .footer {
+      background: linear-gradient(135deg, #2c2418, #3f2d16);
+      color: #fff;
+      padding: 48px 70px;
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 40px;
+    }
+
+    .footer h2 {
+      color: #fff;
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .footer p {
+      color: rgba(255,255,255,.82);
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .refs p {
+      font-size: 14px;
+      line-height: 1.4;
+      margin-bottom: 7px;
+    }
+
+    @page {
+      size: auto;
+      margin: 0;
+    }
+
+    @media print {
+      .toolbar { display: none !important; }
+      body { background: #fff !important; }
+      .wrap {
+        width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .content,
+      .footer {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+
+      .hero-main,
+      .grid-2,
+      .grid-3,
+      .flow,
+      .stats,
+      .checklist,
+      .footer {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-top {
+        flex-direction: column;
+        margin-bottom: 40px;
+      }
+
+      h1 { font-size: 46px; }
+      h2 { font-size: 34px; }
+      .subtitle { font-size: 20px; }
+      p, .lead { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <strong>Infográfico de 1 página longa:</strong> ideal para publicar como página web, enviar link ou capturar como imagem/PDF longo.
+    <button onclick="window.print()">Imprimir / Salvar PDF</button>
+  </div>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="logo-box">
+          <img src="https://rbmgroupassessoria.com.br/wp-content/uploads/2025/05/Logo-RBM.webp" alt="RBM Contabilidade" />
+        </div>
+        <div class="tag">Guia rápido para empresas</div>
+      </div>
+
+      <div class="hero-main">
+        <div>
+          <h1>Saúde e Segurança do Trabalho</h1>
+          <p class="subtitle">O essencial para sua empresa entender obrigações, documentos, eSocial, saúde mental, penalidades e o papel da contabilidade.</p>
+        </div>
+        <div class="hero-card">
+          <strong>SST</strong>
+          <span>Não é apenas burocracia. É proteção jurídica, operacional e humana para a empresa.</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="content">
+      <section class="section">
+        <div class="section-head">
+          <div class="num">01</div>
+          <div>
+            <div class="kicker">Por que isso importa?</div>
+            <h2>A empresa é obrigada a cuidar da segurança e saúde dos trabalhadores.</h2>
+          </div>
+        </div>
+        <p class="lead">Toda empresa com empregados precisa manter atenção à Saúde e Segurança do Trabalho. O tema envolve prevenção de acidentes, exames ocupacionais, documentos técnicos, gestão de riscos e envio de informações ao eSocial.</p>
+        <div class="grid-3">
+          <article class="card gold"><div class="icon">⚖️</div><h3>Obrigação legal</h3><p>A CLT e as Normas Regulamentadoras exigem que a empresa cumpra e faça cumprir as regras de segurança.</p></article>
+          <article class="card gold"><div class="icon">🛡️</div><h3>Prevenção</h3><p>Identificar riscos ajuda a evitar acidentes, doenças ocupacionais, afastamentos e prejuízos.</p></article>
+          <article class="card gold"><div class="icon">📑</div><h3>Prova documental</h3><p>Documentos, exames e registros atualizados fortalecem a empresa em fiscalizações e processos.</p></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">02</div>
+          <div>
+            <div class="kicker">O que deve ser avaliado?</div>
+            <h2>Não existe empresa totalmente sem risco.</h2>
+          </div>
+        </div>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Tipos de riscos ocupacionais</h3>
+            <ul>
+              <li><strong>Físicos:</strong> ruído, calor, frio, vibração.</li>
+              <li><strong>Químicos:</strong> produtos, poeiras, vapores.</li>
+              <li><strong>Biológicos:</strong> vírus, bactérias, material contaminado.</li>
+              <li><strong>Ergonômicos:</strong> postura, repetição, esforço.</li>
+              <li><strong>Psicossociais:</strong> sobrecarga, assédio, conflitos.</li>
+              <li><strong>Acidentes:</strong> quedas, cortes, choques, queimaduras.</li>
+            </ul>
+          </article>
+          <article class="card dark">
+            <h3>Base legal principal</h3>
+            <ul>
+              <li><strong>CLT, arts. 157 e 158:</strong> deveres da empresa e empregados.</li>
+              <li><strong>NR-01:</strong> gerenciamento de riscos ocupacionais.</li>
+              <li><strong>NR-07:</strong> PCMSO e exames ocupacionais.</li>
+              <li><strong>NR-06:</strong> uso e controle de EPIs.</li>
+              <li><strong>NR-17:</strong> ergonomia e organização do trabalho.</li>
+              <li><strong>Lei nº 8.213/1991:</strong> acidente de trabalho e benefícios.</li>
+            </ul>
+          </article>
+        </div>
+        <div class="alert danger"><p><strong>Atenção:</strong> documento genérico ou desatualizado pode não proteger a empresa. O conteúdo precisa representar a realidade do ambiente de trabalho.</p></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">03</div>
+          <div>
+            <div class="kicker">Documentos essenciais</div>
+            <h2>O que a empresa precisa conhecer e manter sob controle?</h2>
+          </div>
+        </div>
+        <table class="doc-table">
+          <thead><tr><th>Documento</th><th>Finalidade</th><th>Ponto de atenção</th></tr></thead>
+          <tbody>
+            <tr><td><strong>PGR</strong></td><td>Identifica perigos, avalia riscos e define medidas preventivas.</td><td>Deve refletir a realidade da empresa.</td></tr>
+            <tr><td><strong>PCMSO</strong></td><td>Define exames ocupacionais e acompanhamento médico.</td><td>Deve estar alinhado ao PGR.</td></tr>
+            <tr><td><strong>ASO</strong></td><td>Informa aptidão ou inaptidão para a função.</td><td>O admissional deve ocorrer antes do início.</td></tr>
+            <tr><td><strong>LTCAT</strong></td><td>Avalia exposição a agentes nocivos para fins previdenciários.</td><td>Importante para aposentadoria especial.</td></tr>
+            <tr><td><strong>PPP</strong></td><td>Registra histórico laboral e exposição a riscos.</td><td>Precisa ser coerente com laudos e eSocial.</td></tr>
+            <tr><td><strong>EPI e treinamentos</strong></td><td>Comprovam orientação, capacitação e entrega de proteção.</td><td>Exigem registro e controle.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">04</div>
+          <div>
+            <div class="kicker">Como regularizar?</div>
+            <h2>Crie uma rotina simples de controle.</h2>
+          </div>
+        </div>
+        <div class="flow">
+          <div class="step"><b>1</b><span>Contratar profissional de SST</span></div>
+          <div class="step"><b>2</b><span>Levantar funções e riscos</span></div>
+          <div class="step"><b>3</b><span>Atualizar PGR e PCMSO</span></div>
+          <div class="step"><b>4</b><span>Realizar exames no prazo</span></div>
+          <div class="step"><b>5</b><span>Enviar dados ao eSocial</span></div>
+        </div>
+        <div class="alert"><p><strong>Regra prática:</strong> a contabilidade pode transmitir informações, mas depende dos dados corretos enviados pela empresa, clínica ocupacional e profissionais habilitados em SST.</p></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">05</div>
+          <div>
+            <div class="kicker">eSocial e saúde mental</div>
+            <h2>O controle está cada vez mais integrado.</h2>
+          </div>
+        </div>
+        <div class="grid-3">
+          <article class="card gold"><div class="icon">🚑</div><h3>S-2210</h3><p>Comunicação de Acidente de Trabalho.</p></article>
+          <article class="card gold"><div class="icon">🩺</div><h3>S-2220</h3><p>Monitoramento da saúde e exames ocupacionais.</p></article>
+          <article class="card gold"><div class="icon">🏭</div><h3>S-2240</h3><p>Condições ambientais e exposição a agentes nocivos.</p></article>
+        </div>
+        <p style="margin-top:22px;">A saúde mental também entrou na pauta da gestão de riscos. Sobrecarga, assédio, conflitos, metas incompatíveis, jornadas excessivas e desorganização podem contribuir para adoecimento.</p>
+        <div class="stats">
+          <div class="stat"><strong>546.254</strong><span>benefícios por transtornos mentais e comportamentais em 2025.</span></div>
+          <div class="stat"><strong>15,66%</strong><span>crescimento em relação a 2024, segundo dados divulgados.</span></div>
+          <div class="stat"><strong>472.328</strong><span>benefícios nessa categoria em 2024.</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">06</div>
+          <div>
+            <div class="kicker">Riscos de não cumprir</div>
+            <h2>Ignorar SST pode sair mais caro que prevenir.</h2>
+          </div>
+        </div>
+        <div class="grid-3">
+          <article class="card gold"><div class="icon">💸</div><h3>Multas</h3><p>Por ausência de documentos, exames fora do prazo, falta de treinamento ou descumprimento de NRs.</p></article>
+          <article class="card gold"><div class="icon">⚖️</div><h3>Processos</h3><p>Acidentes e doenças ocupacionais podem gerar pedidos de indenização, estabilidade e danos morais.</p></article>
+          <article class="card gold"><div class="icon">📉</div><h3>Custos indiretos</h3><p>Afastamentos, substituições, rotatividade e perda de produtividade afetam a operação.</p></article>
+        </div>
+        <div class="alert danger"><p><strong>Exemplo:</strong> contratar empregado sem exame admissional cria risco. Se surgir problema de saúde ou acidente no início, a empresa terá dificuldade para comprovar aptidão prévia.</p></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">07</div>
+          <div>
+            <div class="kicker">Papel da contabilidade</div>
+            <h2>A contabilidade orienta e transmite, mas não substitui o profissional de SST.</h2>
+          </div>
+        </div>
+        <div class="grid-2">
+          <article class="card gold">
+            <h3>O que a contabilidade pode fazer</h3>
+            <ul>
+              <li>Orientar sobre obrigações e prazos.</li>
+              <li>Solicitar documentos e exames necessários.</li>
+              <li>Transmitir eventos ao eSocial com base nas informações recebidas.</li>
+              <li>Alertar sobre riscos de inconsistência.</li>
+            </ul>
+          </article>
+          <article class="card dark">
+            <h3>O que não é responsabilidade da contabilidade</h3>
+            <ul>
+              <li>Elaborar PGR, PCMSO, LTCAT ou laudos técnicos.</li>
+              <li>Fazer análise ambiental do local de trabalho.</li>
+              <li>Emitir ASO ou atestar aptidão médica.</li>
+              <li>Assumir responsabilidade técnica pelos riscos da empresa.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="num">08</div>
+          <div>
+            <div class="kicker">Checklist final</div>
+            <h2>Sua empresa está organizada em SST?</h2>
+          </div>
+        </div>
+        <div class="checklist">
+          <div class="check"><span><strong>PGR atualizado</strong><br />Riscos identificados e medidas documentadas.</span></div>
+          <div class="check"><span><strong>PCMSO ativo</strong><br />Exames definidos conforme funções e riscos.</span></div>
+          <div class="check"><span><strong>ASO em dia</strong><br />Admissional, periódico, retorno e demissional controlados.</span></div>
+          <div class="check"><span><strong>eSocial monitorado</strong><br />Eventos de SST enviados quando aplicável.</span></div>
+          <div class="check"><span><strong>EPIs controlados</strong><br />Entrega, substituição e orientação registrados.</span></div>
+          <div class="check"><span><strong>Treinamentos documentados</strong><br />Capacitações realizadas e arquivadas.</span></div>
+          <div class="check"><span><strong>Saúde mental observada</strong><br />Sobrecarga, assédio e conflitos monitorados.</span></div>
+          <div class="check"><span><strong>Comunicação com a contabilidade</strong><br />Mudanças informadas antes de gerar atraso.</span></div>
+        </div>
+        <div class="quote">Regularizar SST é proteger pessoas, reduzir riscos e organizar a empresa.</div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <div>
+        <h2>Como a RBM pode ajudar</h2>
+        <p>A RBM Contabilidade orienta sua empresa sobre obrigações trabalhistas, prazos, admissões, afastamentos, eSocial e organização documental.</p>
+        <p>Para laudos, exames e avaliações técnicas, conte com profissionais habilitados em Saúde e Segurança do Trabalho.</p>
+      </div>
+      <div class="refs">
+        <p><strong>Referências:</strong></p>
+        <p>CLT, arts. 157 e 158.</p>
+        <p>NR-01 — Gerenciamento de Riscos Ocupacionais.</p>
+        <p>NR-07 — PCMSO.</p>
+        <p>Lei nº 8.213/1991.</p>
+        <p>Portal eSocial — eventos S-2210, S-2220 e S-2240.</p>
+        <p>Dados previdenciários sobre afastamentos por transtornos mentais.</p>
+        <p><em>Material informativo. Não substitui avaliação técnica ou análise jurídica específica.</em></p>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>

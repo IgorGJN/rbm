@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RBM | Licença-Paternidade e Salário-Paternidade</title>
+<style>
+:root{
+  --rbm-navy:#0B2347;
+  --rbm-navy-2:#163B6D;
+  --rbm-gold:#B9873B;
+  --rbm-gold-2:#D6B16A;
+  --rbm-cream:#F6F0E7;
+  --rbm-paper:#FFFDF9;
+  --rbm-ink:#172235;
+  --rbm-muted:#667085;
+  --rbm-line:#E7DDD0;
+  --rbm-soft:#FBF7F1;
+  --rbm-white:#FFFFFF;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background:linear-gradient(135deg,#f2eee7 0%,#ffffff 45%,#eef4fb 100%);
+  color:var(--rbm-ink);
+  line-height:1.42;
+}
+.toolbar{
+  position:sticky;top:0;z-index:30;
+  display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+  padding:12px 16px;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rbm-line);
+}
+.toolbar button,.toolbar a{
+  appearance:none;border:0;border-radius:999px;padding:10px 16px;
+  font-size:13px;font-weight:800;text-decoration:none;cursor:pointer;
+  color:#fff;background:var(--rbm-navy);box-shadow:0 10px 24px rgba(11,35,71,.14);
+}
+.toolbar a.secondary{background:#fff;color:var(--rbm-navy);border:1px solid var(--rbm-line);box-shadow:none}
+.wrap{padding:28px 14px 48px}
+.page{
+  width:210mm;min-height:297mm;margin:0 auto;position:relative;overflow:hidden;
+  background:var(--rbm-paper);border-radius:22px;box-shadow:0 24px 70px rgba(11,35,71,.16);
+}
+.page::before{content:"";position:absolute;inset:0;border:12px solid var(--rbm-cream);pointer-events:none;z-index:1}
+.hero{
+  position:relative;min-height:89mm;padding:14mm 15mm 12mm;display:grid;grid-template-columns:1.12fr .88fr;gap:12mm;align-items:stretch;
+  background:linear-gradient(135deg,var(--rbm-cream),#fffaf3 58%,#f7efe4);
+  overflow:hidden;
+}
+.hero::before{content:"";position:absolute;right:-34mm;top:-38mm;width:110mm;height:110mm;border-radius:50%;background:rgba(185,135,59,.16)}
+.hero::after{content:"";position:absolute;left:-18mm;bottom:-38mm;width:78mm;height:78mm;border-radius:50%;border:18px solid rgba(11,35,71,.06)}
+.brand{position:relative;z-index:2;display:flex;align-items:center;gap:12px;margin-bottom:15mm}
+.brand img{height:35px;max-width:150px;object-fit:contain;display:block}
+.brand-fallback{font-weight:900;color:var(--rbm-navy);font-size:18px;letter-spacing:.03em}
+.hero-copy{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center}
+.kicker{margin:0 0 8px;color:var(--rbm-gold);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.18em}
+h1{margin:0;color:var(--rbm-navy);font-size:38px;line-height:.98;letter-spacing:-1.1px;max-width:118mm}
+.subtitle{margin:12px 0 0;max-width:122mm;font-size:15.5px;color:#3B465A}
+.hero-note{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.chip{border-radius:999px;border:1px solid #dcc596;background:#fff9ee;color:#75501b;font-size:11px;font-weight:900;padding:7px 10px}.chip.navy{background:var(--rbm-navy);border-color:var(--rbm-navy);color:#fff}
+.photo-card{position:relative;z-index:2;border-radius:24px;overflow:hidden;min-height:62mm;background:var(--rbm-navy);box-shadow:0 22px 50px rgba(11,35,71,.20)}
+.photo-card img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.95) contrast(1.02)}
+.photo-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,35,71,.05),rgba(11,35,71,.55))}
+.photo-label{position:absolute;left:14px;bottom:14px;right:14px;z-index:3;background:rgba(255,255,255,.94);border-left:5px solid var(--rbm-gold);border-radius:14px;padding:10px 12px;color:var(--rbm-navy);font-weight:900;font-size:13px;box-shadow:0 12px 26px rgba(0,0,0,.16)}
+.content{position:relative;z-index:2;padding:12mm 15mm 10mm;background:var(--rbm-paper)}
+.intro{display:grid;grid-template-columns:1.12fr .88fr;gap:12px;margin-bottom:12px}
+.summary{border-radius:20px;padding:16px 18px;background:linear-gradient(135deg,var(--rbm-navy),var(--rbm-navy-2));color:#fff;box-shadow:0 16px 32px rgba(11,35,71,.14)}
+.summary p{margin:0;color:#eef5ff;font-size:14px}.summary strong{color:#fff}.summary .mini{margin:0 0 6px;color:#DCC494;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:900}
+.side-note{border:1px solid var(--rbm-line);background:#fff;border-radius:20px;padding:16px 18px}.side-note h2{font-size:18px;margin:0 0 8px;color:var(--rbm-navy)}.side-note p{margin:0;color:#394559;font-size:13.5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{border:1px solid var(--rbm-line);border-radius:20px;background:#fff;padding:15px 17px;box-shadow:0 10px 24px rgba(11,35,71,.055)}
+.card.gold{background:#fff8ec;border-color:#ead2a2}.card.navy{background:var(--rbm-navy);border-color:var(--rbm-navy);color:#fff}.card.full{grid-column:span 2}.card.soft{background:var(--rbm-soft)}
+h2{margin:0 0 8px;font-size:20px;line-height:1.15;color:var(--rbm-navy);letter-spacing:-.25px}.card.navy h2,.card.navy p,.card.navy li{color:#fff}.card.navy li::before{color:var(--rbm-gold-2)}
+p{margin:0 0 8px;font-size:13.9px;color:#2D384C}p:last-child{margin-bottom:0}
+ul{margin:8px 0 0;padding:0;list-style:none}li{position:relative;margin:6px 0;padding-left:20px;color:#2D384C;font-size:13.6px}li::before{content:"";position:absolute;left:0;top:.53em;width:7px;height:7px;border-radius:50%;background:var(--rbm-gold)}
+.two-col{columns:2;column-gap:18px}.mini-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.16em;color:var(--rbm-gold);font-weight:900;margin:0 0 6px}.note{font-size:11.6px;color:var(--rbm-muted);margin-top:6px}.emphasis{font-size:28px;font-weight:900;color:var(--rbm-navy);line-height:1}.small{font-size:11.8px;color:var(--rbm-muted)}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.step{border:1px solid #eadcc5;border-radius:16px;background:#fff;padding:10px;text-align:center}.step strong{display:block;font-size:12px;color:var(--rbm-navy)}.step span{display:block;margin-top:3px;font-size:25px;line-height:1;font-weight:900;color:var(--rbm-gold)}.step.featured{background:var(--rbm-navy);border-color:var(--rbm-navy)}.step.featured strong,.step.featured span,.step.featured small{color:#fff}.step small{display:block;font-size:10px;color:var(--rbm-muted);font-weight:700;margin-top:2px}
+.recommend{margin-top:12px;border-radius:22px;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:linear-gradient(135deg,#ffffff,#f7efe4);border:1px solid var(--rbm-line)}.recommend strong{display:block;color:var(--rbm-navy);font-size:16px;margin-bottom:3px}.recommend p{font-size:13px;color:#455064}.cta{white-space:nowrap;border-radius:999px;padding:10px 14px;background:var(--rbm-gold);color:#fff;font-weight:900;font-size:12.5px;text-decoration:none}
+.footer{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;align-items:end;margin-top:11px;padding-top:9px;border-top:1px solid var(--rbm-line);font-size:10.6px;color:var(--rbm-muted)}.footer strong{color:var(--rbm-navy)}.footer a{color:var(--rbm-navy);font-weight:700;text-decoration:none}
+@media(max-width:900px){.page{width:min(100%,210mm);min-height:auto;border-radius:0}.wrap{padding:0}.hero{grid-template-columns:1fr;padding:26px 22px}.content{padding:22px}.brand{margin-bottom:22px}.intro,.grid{grid-template-columns:1fr}.card.full{grid-column:span 1}.timeline{grid-template-columns:repeat(2,1fr)}h1{font-size:34px}.two-col{columns:1}.recommend{grid-template-columns:1fr}.cta{display:inline-block;width:max-content}.footer{grid-template-columns:1fr}.page::before{display:none}}
+@page{size:A4;margin:0}
+@media print{body{background:#fff}.toolbar{display:none}.wrap{padding:0}.page{width:210mm;min-height:297mm;margin:0;box-shadow:none;border-radius:0}.page::before{border-width:8px}.hero{min-height:86mm}.content{padding-bottom:8mm}.photo-card{box-shadow:none}.card,.summary,.recommend{box-shadow:none}a{color:inherit;text-decoration:none}}
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <button onclick="window.print()">Imprimir / Salvar em PDF</button>
+    <a class="secondary" href="https://rbmgroupassessoria.com.br/" target="_blank" rel="noopener">Abrir site da RBM</a>
+  </div>
+
+  <main class="wrap">
+    <section class="page">
+      <header class="hero">
+        <div class="hero-copy">
+          <div class="brand">
+            <img src="https://rbmgroupassessoria.com.br/wp-content/uploads/2025/05/Logo-RBM.webp" alt="RBM Contabilidade" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <span class="brand-fallback" style="display:none">RBM Contabilidade</span>
+          </div>
+          <p class="kicker">Informativo trabalhista • Departamento Pessoal</p>
+          <h1>Licença-paternidade e salário-paternidade</h1>
+          <p class="subtitle">A nova lei amplia gradualmente a licença, cria regras sobre pagamento e traz impactos para admissão, afastamento, estabilidade e rotinas internas.</p>
+          <div class="hero-note">
+            <span class="chip navy">Lei nº 15.371/2026</span>
+            <span class="chip">Vigência prática a partir de 2027</span>
+          </div>
+        </div>
+        <figure class="photo-card" aria-label="Equipe empresarial em atendimento consultivo">
+          <img src="https://rbmgroupassessoria.com.br/wp-content/uploads/2025/05/services-002v.webp" alt="Equipe empresarial analisando informações em tablet">
+          <figcaption class="photo-label">Orientação trabalhista com clareza para decisões seguras.</figcaption>
+        </figure>
+      </header>
+
+      <section class="content">
+        <div class="intro">
+          <article class="summary">
+            <p class="mini">Resumo para o empregador</p>
+            <p>A licença-paternidade passa a ter ampliação gradual e a lei institui o salário-paternidade no âmbito da Previdência Social, exigindo atenção das empresas nas rotinas de DP.</p>
+          </article>
+          <article class="side-note">
+            <h2>Atenção ao prazo</h2>
+            <p>O empregado deve comunicar o período previsto da licença com antecedência mínima de 30 dias, salvo parto antecipado, quando a comunicação deve ocorrer o quanto antes.</p>
+          </article>
+        </div>
+
+        <article class="card full soft">
+          <p class="mini-title">Cronograma de ampliação</p>
+          <h2>Quantidade de dias da licença-paternidade</h2>
+          <div class="timeline">
+            <div class="step"><strong>Até 2026</strong><span>5</span><small>dias</small></div>
+            <div class="step"><strong>2027</strong><span>10</span><small>dias</small></div>
+            <div class="step"><strong>2028</strong><span>15</span><small>dias</small></div>
+            <div class="step featured"><strong>2029</strong><span>20</span><small>dias*</small></div>
+          </div>
+          <p class="note">*O patamar de 20 dias em 2029 está condicionado à regra fiscal prevista na própria lei.</p>
+        </article>
+
+        <div class="grid" style="margin-top:12px">
+          <article class="card gold">
+            <h2>Salário-paternidade</h2>
+            <ul>
+              <li>Empregado comum: empresa paga e compensa/reembolsa conforme a regulamentação aplicável.</li>
+              <li>Empregado doméstico, empregado de MEI e segurados previstos: pagamento direto pela Previdência.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h2>Estabilidade</h2>
+            <p>É vedada a dispensa arbitrária ou sem justa causa do início da licença até <strong>1 mês após o término</strong>.</p>
+            <p class="note">Dispensa após a comunicação e antes do início pode gerar indenização, conforme a lei.</p>
+          </article>
+
+          <article class="card navy">
+            <h2>Empresa Cidadã</h2>
+            <p>Empresas participantes poderão prorrogar a licença por mais <strong>15 dias</strong>. Quando a licença obrigatória chegar a 20 dias, o total poderá chegar a 35 dias.</p>
+          </article>
+
+          <article class="card">
+            <h2>Situações específicas</h2>
+            <ul>
+              <li>Adoção e guarda judicial para fins de adoção.</li>
+              <li>Criança ou adolescente com deficiência: acréscimo de 1/3.</li>
+              <li>Internação relacionada ao parto pode prorrogar a licença.</li>
+              <li>Possibilidade de férias em seguida, se cumpridas as condições legais.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="recommend">
+          <div>
+            <strong>Prepare a empresa antes da vigência.</strong>
+            <p>A RBM pode auxiliar na revisão de comunicados, política interna e procedimentos de Departamento Pessoal.</p>
+          </div>
+          <a class="cta" href="https://rbmgroupassessoria.com.br/" target="_blank" rel="noopener">Fale com a RBM</a>
+        </div>
+
+        <footer class="footer">
+          <div><strong>RBM Contabilidade</strong><br>rbmgroupassessoria.com.br<br>Contabilidade estratégica, clara e humana.</div>
+          <div>Fonte legal: Lei nº 15.371/2026, que dispõe sobre licença-paternidade, institui o salário-paternidade e altera a CLT e leis previdenciárias. Material meramente informativo, sujeito à regulamentação e análise do caso concreto.</div>
+        </footer>
+      </section>
+    </section>
+  </main>
+
+</body>
+</html>
