@@ -13,18 +13,14 @@
   function normalizeUrl(value) {
     let url = String(value || '').trim();
     if (!url) return '';
-
-    // Remove aspas acidentais copiadas junto com o link.
     url = url.replace(/^[\"']|[\"']$/g, '').trim();
 
-    // Google Drive: transforma link de compartilhamento em link exibível no <img>.
     const driveFile = url.match(/drive\.google\.com\/file\/d\/([^/]+)/i);
     const driveId = driveFile ? driveFile[1] : (url.match(/[?&]id=([^&]+)/i) || [])[1];
     if (/drive\.google\.com/i.test(url) && driveId) {
       return `https://drive.google.com/thumbnail?id=${encodeURIComponent(driveId)}&sz=w2000`;
     }
 
-    // Aceita links sem protocolo, como: rbmgroupassessoria.com.br/imagem.webp
     if (/^www\./i.test(url)) return `https://${url}`;
     if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(url) && !/^[a-z][a-z0-9+.-]*:/i.test(url)) {
       return `https://${url}`;
@@ -37,12 +33,13 @@
     const url = normalizeUrl(value);
     if (!url) return '';
     if (/^(https?:|data:image\/|blob:|#|mailto:|tel:)/i.test(url)) return url;
-
-    // Permite imagens locais/relativas dentro da pasta do projeto. Ex.: imagens/foto.jpg ou ./assets/foto.webp
-    if (/^(\.?\.?\/|assets\/|img\/|images\/|imagens\/)/i.test(url)) return url;
-    if (/^[^\\/:*?"<>|]+\.(png|jpe?g|webp|gif|svg)$/i.test(url)) return url;
-
+    if (socialSafeRelativeUrl(url)) return url;
     return '';
+  }
+
+  function socialSafeRelativeUrl(url) {
+    if (/^(\.?\.?\/|assets\/|img\/|images\/|imagens\/)/i.test(url)) return true;
+    return /^[^\\/:*?"<>|]+\.(png|jpe?g|webp|gif|svg)$/i.test(url);
   }
 
   function cssUrl(value) {
@@ -75,6 +72,15 @@
     return { value: '#FFFFFF', text: '#1E293B', title: '#0B1F33', muted: '#64748B', border: '#D8E0E8' };
   }
 
+  function isColor(value) {
+    return /^#[0-9a-f]{6}$/i.test(String(value || '').trim());
+  }
+
+  function pickColor(value, fallback) {
+    const raw = String(value || '').trim();
+    return isColor(raw) ? raw : fallback;
+  }
+
   function ratio(value, fallback) {
     const raw = Number(value);
     const safe = Number.isFinite(raw) ? raw : Number(fallback || 100);
@@ -98,12 +104,68 @@
     </div>`;
   }
 
+  function blockCssVars(block, doc) {
+    const data = block.data || {};
+    const accent = pickColor(data.accentColor, color(block, doc));
+    const bg = blockBackground(block);
+    const blockBg = block.type === 'custom' ? pickColor(data.bgColor, bg.value) : bg.value;
+    const title = pickColor(data.titleColor, bg.title);
+    const text = pickColor(data.textColor, bg.text);
+    const muted = pickColor(data.subtitleColor || data.mutedColor, bg.muted);
+    const border = pickColor(data.borderColor, bg.border);
+    return [
+      `--accent:${escapeHtml(accent)}`,
+      `--block-bg:${escapeHtml(blockBg)}`,
+      `--block-text:${escapeHtml(text)}`,
+      `--block-title:${escapeHtml(title)}`,
+      `--block-muted:${escapeHtml(muted)}`,
+      `--block-border:${escapeHtml(border)}`,
+      `--button-text:${escapeHtml(pickColor(data.buttonTextColor, '#FFFFFF'))}`,
+      `--button-secondary-text:${escapeHtml(pickColor(data.secondaryTextColor, accent))}`,
+      `--caption-color:${escapeHtml(pickColor(data.captionColor, '#64748B'))}`,
+      `--item-title:${escapeHtml(pickColor(data.itemTitleColor, title))}`,
+      `--item-text:${escapeHtml(pickColor(data.itemTextColor, text))}`,
+      `--number-text:${escapeHtml(pickColor(data.numberColor || data.checkColor, '#FFFFFF'))}`
+    ].join(';');
+  }
+
+  function customWidthClass(width) {
+    const value = String(width || '100');
+    if (['100', '75', '67', '50', '33', '25'].includes(value)) return ` width-${value}`;
+    return ' width-100';
+  }
+
+  function renderCustomBlock(block, doc, style) {
+    const data = block.data || {};
+    const src = sanitizeUrl(data.imageUrl);
+    const items = Array.isArray(data.items) ? data.items : [];
+    const imagePosition = ['top', 'left', 'right'].includes(data.imagePosition) ? data.imagePosition : 'top';
+    const align = ['left', 'center', 'right', 'justify'].includes(data.align) ? data.align : 'left';
+    const padding = Math.max(3, Math.min(10, Number(data.padding || 5)));
+    const radius = Math.max(0, Math.min(28, Number(data.radius || 14)));
+    const imageHeight = Math.max(18, Math.min(70, Number(data.imageHeight || 28)));
+    const borderStyle = data.borderStyle || 'normal';
+    const shadowClass = data.shadow ? ' has-shadow' : '';
+    const borderClass = borderStyle === 'side' ? ' border-side' : borderStyle === 'none' ? ' border-none' : '';
+    const buttonColor = pickColor(data.buttonColor, doc?.meta?.accent || '#123C5A');
+
+    const imageHtml = src && data.showImage ? `<figure class="custom-image"><img src="${escapeHtml(src)}" alt=""></figure>` : '';
+    const textHtml = `<div class="custom-body">
+      ${data.showTitle ? `<h3>${escapeHtml(data.title || '')}</h3>` : ''}
+      ${data.showText ? `<div class="custom-text">${nl2p(data.text || '')}</div>` : ''}
+      ${data.showItems && items.length ? `<ul class="custom-list">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : ''}
+      ${data.showButton ? `<a class="custom-button" href="${escapeHtml(sanitizeUrl(data.buttonUrl || '#'))}">${escapeHtml(data.buttonLabel || 'Saiba mais')}</a>` : ''}
+    </div>`;
+
+    return `<section class="custom-card image-${escapeHtml(imagePosition)} align-${escapeHtml(align)}${shadowClass}${borderClass}" style="${style};--custom-padding:${padding}mm;--custom-radius:${radius}px;--custom-img-height:${imageHeight}mm;--custom-button-bg:${escapeHtml(buttonColor)}">
+      ${imagePosition === 'right' ? `${textHtml}${imageHtml}` : `${imageHtml}${textHtml}`}
+    </section>`;
+  }
+
   function renderBlock(block, doc, selectedId) {
     const data = block.data || {};
     const selected = selectedId === block.id ? ' selected-block' : '';
-    const accent = color(block, doc);
-    const bg = blockBackground(block);
-    const style = `--accent:${escapeHtml(accent)};--block-bg:${escapeHtml(bg.value)};--block-text:${escapeHtml(bg.text)};--block-title:${escapeHtml(bg.title)};--block-muted:${escapeHtml(bg.muted)};--block-border:${escapeHtml(bg.border)}`;
+    const style = blockCssVars(block, doc);
     let html = '';
 
     switch (block.type) {
@@ -111,7 +173,16 @@
         const safeImage = sanitizeUrl(data.imageUrl);
         const imageOpacity = ratio(data.imageOpacity, 100);
         const overlayOpacity = safeImage ? inverseRatio(data.imageOpacity, 100) : '0.00';
-        html = `<section class="cover-block" style="${style};--cover-img-opacity:${imageOpacity};--cover-overlay-opacity:${overlayOpacity};--cover-wash-opacity:${overlayOpacity}">
+        const coverStyle = [
+          style,
+          `--cover-img-opacity:${imageOpacity}`,
+          `--cover-overlay-opacity:${overlayOpacity}`,
+          `--cover-wash-opacity:${overlayOpacity}`,
+          `--cover-eyebrow-color:${escapeHtml(pickColor(data.eyebrowColor, pickColor(data.titleColor, blockBackground(block).title)))}`,
+          `--cover-title-color:${escapeHtml(pickColor(data.titleColor, blockBackground(block).title))}`,
+          `--cover-subtitle-color:${escapeHtml(pickColor(data.subtitleColor, blockBackground(block).muted))}`
+        ].join(';');
+        html = `<section class="cover-block" style="${coverStyle}">
           ${safeImage ? `<img class="cover-bg-img" src="${escapeHtml(safeImage)}" alt="">` : ''}
           <div class="cover-accent-wash" aria-hidden="true"></div>
           ${safeImage ? `<div class="cover-overlay" aria-hidden="true"></div>` : ''}
@@ -130,7 +201,8 @@
         break;
       }
       case 'paragraph': {
-        html = `<section class="paragraph-block">${nl2p(data.text)}</section>`;
+        const align = ['left', 'center', 'right', 'justify'].includes(data.align) ? data.align : 'justify';
+        html = `<section class="paragraph-block align-${escapeHtml(align)}" style="${style}">${nl2p(data.text)}</section>`;
         break;
       }
       case 'highlight': {
@@ -175,7 +247,7 @@
       }
       case 'image': {
         const src = sanitizeUrl(data.imageUrl);
-        html = `<figure class="image-block" style="--image-height:${Number(data.height || 42)}mm;--image-opacity:${ratio(data.opacity, 100)}">
+        html = `<figure class="image-block" style="${style};--image-height:${Number(data.height || 42)}mm;--image-opacity:${ratio(data.opacity, 100)}">
           ${src ? `<img src="${escapeHtml(src)}" alt="Imagem do informativo">` : `<div class="highlight-block soft"><h3>Imagem não informada</h3><p>Cole a URL da imagem no painel de edição.</p></div>`}
           ${data.caption ? `<figcaption>${escapeHtml(data.caption)}</figcaption>` : ''}
         </figure>`;
@@ -183,12 +255,16 @@
       }
       case 'buttons': {
         const buttons = Array.isArray(data.buttons) ? data.buttons : [];
-        html = `<section class="buttons-block">
+        html = `<section class="buttons-block" style="${style}">
           ${data.title ? `<h3>${escapeHtml(data.title)}</h3>` : ''}
           <div class="buttons-row">
             ${buttons.map((btn) => `<a class="action-button ${btn.style === 'secondary' ? 'secondary' : ''}" href="${escapeHtml(sanitizeUrl(btn.url))}">${escapeHtml(btn.label)}</a>`).join('')}
           </div>
         </section>`;
+        break;
+      }
+      case 'custom': {
+        html = renderCustomBlock(block, doc, style);
         break;
       }
       case 'divider': {
@@ -204,7 +280,8 @@
       }
     }
 
-    return `<div class="block${selected}" role="button" tabindex="0" data-block-id="${escapeHtml(block.id)}" style="${style}">${blockMenu(block)}${html}</div>`;
+    const widthClass = block.type === 'custom' ? customWidthClass(data.width) : '';
+    return `<div class="block${selected}${widthClass}" role="button" tabindex="0" data-block-id="${escapeHtml(block.id)}" data-block-type="${escapeHtml(block.type)}" style="${style}">${blockMenu(block)}${html}</div>`;
   }
 
   function header(doc) {

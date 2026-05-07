@@ -504,7 +504,16 @@
   }
 
   function inputField(label, path, value, type = 'text') {
-    return `<label class="field"><span>${Renderer.escapeHtml(label)}</span><input type="${type}" data-path="${Renderer.escapeHtml(path)}" value="${Renderer.escapeHtml(value)}"></label>`;
+    return `<label class="field"><span>${Renderer.escapeHtml(label)}</span><input type="${type}" data-path="${Renderer.escapeHtml(path)}" value="${Renderer.escapeHtml(value ?? '')}"></label>`;
+  }
+
+  function checkboxField(label, path, checked) {
+    return `<label class="field checkbox-field"><input type="checkbox" data-path="${Renderer.escapeHtml(path)}" ${checked ? 'checked' : ''}><span>${Renderer.escapeHtml(label)}</span></label>`;
+  }
+
+  function colorField(label, path, value, fallback = '#1E293B') {
+    const safeValue = /^#[0-9a-f]{6}$/i.test(String(value || '').trim()) ? value : fallback;
+    return inputField(label, path, safeValue, 'color');
   }
 
   function imageField(label, path, value) {
@@ -523,7 +532,7 @@
   }
 
   function textareaField(label, path, value, rows = 4) {
-    return `<label class="field"><span>${Renderer.escapeHtml(label)}</span><textarea rows="${rows}" data-path="${Renderer.escapeHtml(path)}">${Renderer.escapeHtml(value)}</textarea></label>`;
+    return `<label class="field"><span>${Renderer.escapeHtml(label)}</span><textarea rows="${rows}" data-path="${Renderer.escapeHtml(path)}">${Renderer.escapeHtml(value ?? '')}</textarea></label>`;
   }
 
   function selectField(label, path, value, options) {
@@ -541,6 +550,15 @@
     return selectField(label, path, key || 'white', items.map((item) => ({ value: item.key, label: item.label })));
   }
 
+  function alignmentSelect(path, value) {
+    return selectField('Alinhamento do texto', path, value || 'left', [
+      { value: 'left', label: 'Esquerda' },
+      { value: 'center', label: 'Centralizado' },
+      { value: 'right', label: 'Direita' },
+      { value: 'justify', label: 'Justificado' }
+    ]);
+  }
+
   function blockFields(block) {
     const data = block.data || {};
     switch (block.type) {
@@ -552,30 +570,43 @@
           imageField('URL da imagem de fundo', 'data.imageUrl', data.imageUrl || ''),
           inputField('Opacidade da imagem de fundo (%)', 'data.imageOpacity', data.imageOpacity ?? 100, 'number'),
           colorSelect('Cor de detalhe', 'data.colorKey', data.colorKey),
-          bgSelect('Cor de fundo da capa', 'data.bgKey', data.bgKey || 'goldSoft')
+          bgSelect('Cor de fundo da capa', 'data.bgKey', data.bgKey || 'goldSoft'),
+          colorField('Cor da chamada superior', 'data.eyebrowColor', data.eyebrowColor, '#0B1F33'),
+          colorField('Cor do título', 'data.titleColor', data.titleColor, '#0B1F33'),
+          colorField('Cor do subtítulo', 'data.subtitleColor', data.subtitleColor, '#64748B')
         ].join('');
       case 'title':
         return [
           selectField('Tamanho do título', 'data.level', data.level || 'h2', [{ value: 'h1', label: 'Grande / capa de seção' }, { value: 'h2', label: 'Padrão / seção' }]),
           textareaField('Título', 'data.title', data.title || '', 2),
           textareaField('Subtítulo', 'data.subtitle', data.subtitle || '', 3),
-          colorSelect('Cor de detalhe', 'data.colorKey', data.colorKey)
+          colorSelect('Cor de detalhe', 'data.colorKey', data.colorKey),
+          colorField('Cor do título', 'data.titleColor', data.titleColor, '#0B1F33'),
+          colorField('Cor do subtítulo', 'data.subtitleColor', data.subtitleColor, '#64748B')
         ].join('');
       case 'paragraph':
-        return textareaField('Texto', 'data.text', data.text || '', 8);
+        return [
+          textareaField('Texto', 'data.text', data.text || '', 8),
+          colorField('Cor do texto', 'data.textColor', data.textColor, '#1E293B'),
+          alignmentSelect('data.align', data.align || 'justify')
+        ].join('');
       case 'highlight':
         return [
           inputField('Título', 'data.title', data.title || ''),
           textareaField('Texto', 'data.text', data.text || '', 5),
           colorSelect('Cor do detalhe', 'data.colorKey', data.colorKey),
           bgSelect('Cor de fundo do bloco', 'data.bgKey', data.bgKey || 'soft'),
+          colorField('Cor do título', 'data.titleColor', data.titleColor, '#0B1F33'),
+          colorField('Cor do texto', 'data.textColor', data.textColor, '#1E293B'),
           selectField('Estilo', 'data.style', data.style || 'soft', [{ value: 'soft', label: 'Com borda lateral' }, { value: 'clean', label: 'Mais limpo' }])
         ].join('');
       case 'institution':
         return [
           inputField('Título', 'data.title', data.title || ''),
           textareaField('Texto', 'data.text', data.text || '', 5),
-          bgSelect('Cor de fundo do bloco', 'data.bgKey', data.bgKey || 'navy')
+          bgSelect('Cor de fundo do bloco', 'data.bgKey', data.bgKey || 'navy'),
+          colorField('Cor do título', 'data.titleColor', data.titleColor, '#FFFFFF'),
+          colorField('Cor do texto', 'data.textColor', data.textColor, '#E6EDF3')
         ].join('');
       case 'columns':
         return renderColumnsEditor(data);
@@ -584,17 +615,23 @@
           inputField('Título', 'data.title', data.title || ''),
           colorSelect('Cor dos marcadores', 'data.colorKey', data.colorKey),
           bgSelect('Cor de fundo dos itens', 'data.bgKey', data.bgKey || 'white'),
+          colorField('Cor do título', 'data.titleColor', data.titleColor, '#0B1F33'),
+          colorField('Cor do texto dos itens', 'data.itemTextColor', data.itemTextColor, '#1E293B'),
+          colorField('Cor do ✓', 'data.checkColor', data.checkColor, '#FFFFFF'),
           textareaField('Itens do checklist — um por linha', 'array.items', (data.items || []).join('\n'), 8)
         ].join('');
       case 'image':
         return [
           imageField('URL da imagem', 'data.imageUrl', data.imageUrl || ''),
           inputField('Legenda', 'data.caption', data.caption || ''),
+          colorField('Cor da legenda', 'data.captionColor', data.captionColor, '#64748B'),
           inputField('Altura em mm', 'data.height', data.height || 42, 'number'),
           inputField('Opacidade da imagem (%)', 'data.opacity', data.opacity ?? 100, 'number')
         ].join('');
       case 'buttons':
         return renderButtonsEditor(data);
+      case 'custom':
+        return renderCustomEditor(data);
       case 'divider':
         return colorSelect('Cor do divisor', 'data.colorKey', data.colorKey);
       case 'spacer':
@@ -611,6 +648,10 @@
       ${selectField('Quantidade de colunas visíveis', 'data.count', data.count || 3, [1,2,3,4,5,6].map((n) => ({ value: n, label: `${n} coluna${n > 1 ? 's' : ''}` })))}
       ${colorSelect('Cor da numeração', 'data.colorKey', data.colorKey)}
       ${bgSelect('Cor de fundo dos cartões', 'data.bgKey', data.bgKey || 'white')}
+      ${colorField('Cor do título geral', 'data.titleColor', data.titleColor, '#0B1F33')}
+      ${colorField('Cor dos títulos dos cards', 'data.itemTitleColor', data.itemTitleColor, '#0B1F33')}
+      ${colorField('Cor dos textos dos cards', 'data.itemTextColor', data.itemTextColor, '#1E293B')}
+      ${colorField('Cor dos números', 'data.numberColor', data.numberColor, '#FFFFFF')}
       <div class="array-editor">
         ${cols.map((col, index) => `<div class="array-item">
           <div class="array-item-title"><span>Item ${index + 1}</span><button class="btn small danger" data-array-action="remove-column" data-index="${index}">Excluir</button></div>
@@ -626,6 +667,9 @@
     return `
       ${inputField('Título do bloco', 'data.title', data.title || '')}
       ${colorSelect('Cor dos botões', 'data.colorKey', data.colorKey || 'blue')}
+      ${colorField('Cor do título', 'data.titleColor', data.titleColor, '#0B1F33')}
+      ${colorField('Cor do texto do botão principal', 'data.buttonTextColor', data.buttonTextColor, '#FFFFFF')}
+      ${colorField('Cor do texto do botão secundário', 'data.secondaryTextColor', data.secondaryTextColor, '#123C5A')}
       <div class="array-editor">
         ${buttons.map((btn, index) => `<div class="array-item">
           <div class="array-item-title"><span>Botão ${index + 1}</span><button class="btn small danger" data-array-action="remove-button" data-index="${index}">Excluir</button></div>
@@ -635,6 +679,55 @@
         </div>`).join('')}
         <button class="btn" data-array-action="add-button">+ Adicionar botão</button>
       </div>`;
+  }
+
+  function renderCustomEditor(data) {
+    return `
+      <div class="hint-box">Este bloco pode ficar lado a lado com outro bloco personalizado. Use 50%, 1/3 ou 1/4 para dividir a linha.</div>
+      ${selectField('Largura do bloco', 'data.width', data.width || '100', [
+        { value: '100', label: '100% — linha inteira' },
+        { value: '75', label: '75% — grande' },
+        { value: '67', label: '2/3 — largo' },
+        { value: '50', label: '50% — dois lado a lado' },
+        { value: '33', label: '1/3 — três lado a lado' },
+        { value: '25', label: '1/4 — quatro lado a lado' }
+      ])}
+      ${checkboxField('Mostrar título', 'data.showTitle', data.showTitle !== false)}
+      ${inputField('Título', 'data.title', data.title || '')}
+      ${checkboxField('Mostrar texto', 'data.showText', data.showText !== false)}
+      ${textareaField('Texto', 'data.text', data.text || '', 5)}
+      ${checkboxField('Mostrar lista de pontos', 'data.showItems', Boolean(data.showItems))}
+      ${textareaField('Pontos — um por linha', 'array.items', (data.items || []).join('\n'), 5)}
+      ${checkboxField('Mostrar imagem', 'data.showImage', Boolean(data.showImage))}
+      ${imageField('Imagem do bloco', 'data.imageUrl', data.imageUrl || '')}
+      ${selectField('Posição da imagem', 'data.imagePosition', data.imagePosition || 'top', [
+        { value: 'top', label: 'Imagem acima' },
+        { value: 'left', label: 'Imagem à esquerda' },
+        { value: 'right', label: 'Imagem à direita' }
+      ])}
+      ${inputField('Altura da imagem em mm', 'data.imageHeight', data.imageHeight || 28, 'number')}
+      ${checkboxField('Mostrar botão', 'data.showButton', Boolean(data.showButton))}
+      ${inputField('Texto do botão', 'data.buttonLabel', data.buttonLabel || '')}
+      ${inputField('Link do botão', 'data.buttonUrl', data.buttonUrl || '#', 'url')}
+      ${bgSelect('Base visual do bloco', 'data.bgKey', data.bgKey || 'white')}
+      ${colorField('Cor de fundo', 'data.bgColor', data.bgColor, '#FFFFFF')}
+      ${colorField('Cor do título', 'data.titleColor', data.titleColor, '#0B1F33')}
+      ${colorField('Cor do texto', 'data.textColor', data.textColor, '#1E293B')}
+      ${colorField('Cor auxiliar', 'data.mutedColor', data.mutedColor, '#64748B')}
+      ${colorField('Cor da borda', 'data.borderColor', data.borderColor, '#D8E0E8')}
+      ${colorField('Cor de detalhe', 'data.accentColor', data.accentColor, '#C8A24A')}
+      ${colorField('Cor do botão', 'data.buttonColor', data.buttonColor, '#123C5A')}
+      ${colorField('Cor do texto do botão', 'data.buttonTextColor', data.buttonTextColor, '#FFFFFF')}
+      ${alignmentSelect('data.align', data.align || 'left')}
+      ${selectField('Estilo da borda', 'data.borderStyle', data.borderStyle || 'normal', [
+        { value: 'normal', label: 'Borda comum' },
+        { value: 'side', label: 'Borda lateral de destaque' },
+        { value: 'none', label: 'Sem borda' }
+      ])}
+      ${inputField('Espaçamento interno em mm', 'data.padding', data.padding || 5, 'number')}
+      ${inputField('Arredondamento em px', 'data.radius', data.radius || 14, 'number')}
+      ${checkboxField('Sombra leve', 'data.shadow', Boolean(data.shadow))}
+    `;
   }
 
   function handleInspectorInput(event) {
@@ -666,6 +759,16 @@
     }
 
     setByPath(block, path, normalizeValue(path, value));
+
+    if (block.type === 'custom' && path === 'data.bgKey' && Blocks.blockBackgroundByKey) {
+      const preset = Blocks.blockBackgroundByKey(value);
+      block.data.bgColor = preset.value;
+      block.data.titleColor = preset.title;
+      block.data.textColor = preset.text;
+      block.data.mutedColor = preset.muted;
+      block.data.borderColor = preset.border;
+    }
+
     return true;
   }
 
@@ -734,7 +837,7 @@
   function normalizeValue(path, value) {
     if (/backgroundOpacity$/i.test(path)) return clampNumber(value, 0, 100, 100);
     if (/imageOpacity$|\.opacity$/i.test(path)) return clampNumber(value, 0, 100, 100);
-    if (/\.count$|\.height$|\.size$/.test(path)) return Number(value || 0);
+    if (/\.count$|\.height$|\.size$|\.imageHeight$|\.padding$|\.radius$/.test(path)) return Number(value || 0);
     if (/imageUrl$|backgroundImage$|logo$/i.test(path)) return String(value || '').trim();
     return value;
   }
