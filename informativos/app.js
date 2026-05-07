@@ -486,6 +486,7 @@
         <button class="btn small" data-inspector-action="duplicate-block">Duplicar bloco</button>
         <button class="btn small danger" data-inspector-action="delete-block">Excluir bloco</button>
       </div>
+      ${block.type !== 'custom' ? renderBlockQuickControls(block) : ''}
       ${blockFields(block)}
     `;
   }
@@ -557,6 +558,75 @@
       { value: 'right', label: 'Direita' },
       { value: 'justify', label: 'Justificado' }
     ]);
+  }
+
+  function buttonGroupField(label, path, value, options) {
+    const safePath = Renderer.escapeHtml(path);
+    const current = String(value ?? options?.[0]?.value ?? '');
+    return `<div class="field button-group-field">
+      <span>${Renderer.escapeHtml(label)}</span>
+      <div class="segmented-options" role="group" aria-label="${Renderer.escapeHtml(label)}">
+        ${options.map((opt) => {
+          const active = String(opt.value) === current ? ' active' : '';
+          return `<button type="button" class="seg-btn${active}" data-quick-path="${safePath}" data-quick-value="${Renderer.escapeHtml(opt.value)}">${Renderer.escapeHtml(opt.label)}</button>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  function editorGroup(title, content, extraClass = '') {
+    return `<section class="editor-group ${extraClass}">
+      <h3>${Renderer.escapeHtml(title)}</h3>
+      ${content}
+    </section>`;
+  }
+
+  function fieldGrid(content) {
+    return `<div class="field-grid">${content}</div>`;
+  }
+
+  function spacingControls(data) {
+    const options = [
+      { value: 'none', label: '0' },
+      { value: 'small', label: 'P' },
+      { value: 'normal', label: 'M' },
+      { value: 'large', label: 'G' }
+    ];
+    return fieldGrid([
+      buttonGroupField('Espaço acima', 'data.spaceTop', data.spaceTop || 'none', options),
+      buttonGroupField('Espaço abaixo', 'data.spaceBottom', data.spaceBottom || 'none', options)
+    ].join(''));
+  }
+
+  function fontControls(data, options = {}) {
+    const hasTitle = options.title !== false;
+    const hasText = options.text !== false;
+    const sizeOptions = [
+      { value: 'small', label: 'P' },
+      { value: 'normal', label: 'M' },
+      { value: 'large', label: 'G' },
+      { value: 'xlarge', label: 'GG' }
+    ];
+    const lineOptions = [
+      { value: 'compact', label: 'Compacta' },
+      { value: 'normal', label: 'Normal' },
+      { value: 'relaxed', label: 'Solta' }
+    ];
+    return fieldGrid([
+      hasTitle ? buttonGroupField('Título', 'data.titleSize', data.titleSize || 'normal', sizeOptions) : '',
+      hasText ? buttonGroupField('Texto', 'data.textSize', data.textSize || 'normal', sizeOptions) : '',
+      hasText ? buttonGroupField('Linha', 'data.lineHeight', data.lineHeight || 'normal', lineOptions) : ''
+    ].filter(Boolean).join(''));
+  }
+
+  function renderBlockQuickControls(block) {
+    const data = block.data || {};
+    if (block.type === 'divider' || block.type === 'spacer') return '';
+    const textOnly = block.type === 'paragraph' || block.type === 'image';
+    return editorGroup('Ajustes rápidos', [
+      spacingControls(data),
+      fontControls(data, { title: !textOnly, text: block.type !== 'divider' })
+    ].join(''));
   }
 
   function blockFields(block) {
@@ -682,51 +752,88 @@
   }
 
   function renderCustomEditor(data) {
+    const widthOptions = [
+      { value: '100', label: '100%' },
+      { value: '75', label: '75%' },
+      { value: '67', label: '2/3' },
+      { value: '50', label: '50%' },
+      { value: '33', label: '1/3' },
+      { value: '25', label: '1/4' }
+    ];
+    const imagePositionOptions = [
+      { value: 'top', label: 'Acima' },
+      { value: 'left', label: 'Esq.' },
+      { value: 'right', label: 'Dir.' }
+    ];
+    const alignOptions = [
+      { value: 'left', label: 'Esq.' },
+      { value: 'center', label: 'Centro' },
+      { value: 'right', label: 'Dir.' },
+      { value: 'justify', label: 'Just.' }
+    ];
+    const borderOptions = [
+      { value: 'normal', label: 'Comum' },
+      { value: 'side', label: 'Lateral' },
+      { value: 'none', label: 'Sem' }
+    ];
+
     return `
-      <div class="hint-box">Este bloco pode ficar lado a lado com outro bloco personalizado. Use 50%, 1/3 ou 1/4 para dividir a linha.</div>
-      ${selectField('Largura do bloco', 'data.width', data.width || '100', [
-        { value: '100', label: '100% — linha inteira' },
-        { value: '75', label: '75% — grande' },
-        { value: '67', label: '2/3 — largo' },
-        { value: '50', label: '50% — dois lado a lado' },
-        { value: '33', label: '1/3 — três lado a lado' },
-        { value: '25', label: '1/4 — quatro lado a lado' }
-      ])}
-      ${checkboxField('Mostrar título', 'data.showTitle', data.showTitle !== false)}
-      ${inputField('Título', 'data.title', data.title || '')}
-      ${checkboxField('Mostrar texto', 'data.showText', data.showText !== false)}
-      ${textareaField('Texto', 'data.text', data.text || '', 5)}
-      ${checkboxField('Mostrar lista de pontos', 'data.showItems', Boolean(data.showItems))}
-      ${textareaField('Pontos — um por linha', 'array.items', (data.items || []).join('\n'), 5)}
-      ${checkboxField('Mostrar imagem', 'data.showImage', Boolean(data.showImage))}
-      ${imageField('Imagem do bloco', 'data.imageUrl', data.imageUrl || '')}
-      ${selectField('Posição da imagem', 'data.imagePosition', data.imagePosition || 'top', [
-        { value: 'top', label: 'Imagem acima' },
-        { value: 'left', label: 'Imagem à esquerda' },
-        { value: 'right', label: 'Imagem à direita' }
-      ])}
-      ${inputField('Altura da imagem em mm', 'data.imageHeight', data.imageHeight || 28, 'number')}
-      ${checkboxField('Mostrar botão', 'data.showButton', Boolean(data.showButton))}
-      ${inputField('Texto do botão', 'data.buttonLabel', data.buttonLabel || '')}
-      ${inputField('Link do botão', 'data.buttonUrl', data.buttonUrl || '#', 'url')}
-      ${bgSelect('Base visual do bloco', 'data.bgKey', data.bgKey || 'white')}
-      ${colorField('Cor de fundo', 'data.bgColor', data.bgColor, '#FFFFFF')}
-      ${colorField('Cor do título', 'data.titleColor', data.titleColor, '#0B1F33')}
-      ${colorField('Cor do texto', 'data.textColor', data.textColor, '#1E293B')}
-      ${colorField('Cor auxiliar', 'data.mutedColor', data.mutedColor, '#64748B')}
-      ${colorField('Cor da borda', 'data.borderColor', data.borderColor, '#D8E0E8')}
-      ${colorField('Cor de detalhe', 'data.accentColor', data.accentColor, '#C8A24A')}
-      ${colorField('Cor do botão', 'data.buttonColor', data.buttonColor, '#123C5A')}
-      ${colorField('Cor do texto do botão', 'data.buttonTextColor', data.buttonTextColor, '#FFFFFF')}
-      ${alignmentSelect('data.align', data.align || 'left')}
-      ${selectField('Estilo da borda', 'data.borderStyle', data.borderStyle || 'normal', [
-        { value: 'normal', label: 'Borda comum' },
-        { value: 'side', label: 'Borda lateral de destaque' },
-        { value: 'none', label: 'Sem borda' }
-      ])}
-      ${inputField('Espaçamento interno em mm', 'data.padding', data.padding || 5, 'number')}
-      ${inputField('Arredondamento em px', 'data.radius', data.radius || 14, 'number')}
-      ${checkboxField('Sombra leve', 'data.shadow', Boolean(data.shadow))}
+      <div class="hint-box compact-hint">Use 50%, 1/3 ou 1/4 para colocar blocos lado a lado. A altura fica igual automaticamente na mesma linha.</div>
+
+      ${editorGroup('Layout', [
+        buttonGroupField('Largura', 'data.width', data.width || '100', widthOptions),
+        fieldGrid([
+          spacingControls(data),
+          buttonGroupField('Alinhamento', 'data.align', data.align || 'left', alignOptions)
+        ].join('')),
+        fieldGrid([
+          inputField('Espaço interno mm', 'data.padding', data.padding || 5, 'number'),
+          inputField('Cantos px', 'data.radius', data.radius || 14, 'number')
+        ].join('')),
+        checkboxField('Igualar altura quando estiver lado a lado', 'data.equalHeight', data.equalHeight !== false)
+      ].join(''))}
+
+      ${editorGroup('Conteúdo', [
+        `<div class="toggle-grid">${[
+          checkboxField('Título', 'data.showTitle', data.showTitle !== false),
+          checkboxField('Texto', 'data.showText', data.showText !== false),
+          checkboxField('Lista', 'data.showItems', Boolean(data.showItems)),
+          checkboxField('Imagem', 'data.showImage', Boolean(data.showImage)),
+          checkboxField('Botão', 'data.showButton', Boolean(data.showButton))
+        ].join('')}</div>`,
+        inputField('Título', 'data.title', data.title || ''),
+        textareaField('Texto', 'data.text', data.text || '', 4),
+        textareaField('Pontos — um por linha', 'array.items', (data.items || []).join('\n'), 4),
+        imageField('Imagem do bloco', 'data.imageUrl', data.imageUrl || ''),
+        fieldGrid([
+          buttonGroupField('Posição da imagem', 'data.imagePosition', data.imagePosition || 'top', imagePositionOptions),
+          inputField('Altura imagem mm', 'data.imageHeight', data.imageHeight || 28, 'number')
+        ].join('')),
+        fieldGrid([
+          inputField('Texto do botão', 'data.buttonLabel', data.buttonLabel || ''),
+          inputField('Link do botão', 'data.buttonUrl', data.buttonUrl || '#', 'url')
+        ].join(''))
+      ].join(''))}
+
+      ${editorGroup('Fonte', fontControls(data, { title: true, text: true }))}
+
+      ${editorGroup('Visual', [
+        fieldGrid([
+          bgSelect('Base visual', 'data.bgKey', data.bgKey || 'white'),
+          buttonGroupField('Borda', 'data.borderStyle', data.borderStyle || 'normal', borderOptions)
+        ].join('')),
+        `<div class="color-grid">${[
+          colorField('Fundo', 'data.bgColor', data.bgColor, '#FFFFFF'),
+          colorField('Título', 'data.titleColor', data.titleColor, '#0B1F33'),
+          colorField('Texto', 'data.textColor', data.textColor, '#1E293B'),
+          colorField('Auxiliar', 'data.mutedColor', data.mutedColor, '#64748B'),
+          colorField('Borda', 'data.borderColor', data.borderColor, '#D8E0E8'),
+          colorField('Detalhe', 'data.accentColor', data.accentColor, '#C8A24A'),
+          colorField('Botão', 'data.buttonColor', data.buttonColor, '#123C5A'),
+          colorField('Texto botão', 'data.buttonTextColor', data.buttonTextColor, '#FFFFFF')
+        ].join('')}</div>`,
+        checkboxField('Sombra leve', 'data.shadow', Boolean(data.shadow))
+      ].join(''))}
     `;
   }
 
@@ -854,6 +961,13 @@
   }
 
   function handleInspectorClick(event) {
+    const quickBtn = event.target.closest('[data-quick-path]');
+    if (quickBtn) {
+      applyInspectorValue(quickBtn.dataset.quickPath, quickBtn.dataset.quickValue);
+      renderAll();
+      return;
+    }
+
     const uploadBtn = event.target.closest('[data-image-upload-btn]');
     if (uploadBtn) {
       const box = uploadBtn.closest('.image-tools');

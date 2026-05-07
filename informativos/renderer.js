@@ -81,6 +81,54 @@
     return isColor(raw) ? raw : fallback;
   }
 
+  function optionValue(value, allowed, fallback) {
+    const raw = String(value || '').trim();
+    return allowed.includes(raw) ? raw : fallback;
+  }
+
+  function spaceMm(value) {
+    const key = optionValue(value, ['none', 'small', 'normal', 'large'], 'none');
+    return { none: 0, small: 1.5, normal: 3, large: 5 }[key];
+  }
+
+  function lineHeightValue(value) {
+    const key = optionValue(value, ['compact', 'normal', 'relaxed'], 'normal');
+    return { compact: 1.35, normal: 1.5, relaxed: 1.62 }[key];
+  }
+
+  function titleBaseSize(block, data) {
+    const type = block?.type || '';
+    if (type === 'cover') return 34;
+    if (type === 'title') return data.level === 'h1' ? 34 : 24;
+    if (type === 'institution') return 23;
+    if (type === 'columns') return 24;
+    if (type === 'custom') return 21;
+    return 21;
+  }
+
+  function textBaseSize(block) {
+    const type = block?.type || '';
+    if (type === 'cover') return 19;
+    if (type === 'paragraph') return 18;
+    if (type === 'custom') return 17;
+    if (type === 'columns') return 16;
+    if (type === 'image') return 14;
+    return 18;
+  }
+
+  function fontPx(base, value) {
+    const key = optionValue(value, ['small', 'normal', 'large', 'xlarge'], 'normal');
+    const delta = { small: -2, normal: 0, large: 2, xlarge: 4 }[key];
+    return Math.max(16, base + delta);
+  }
+
+  function blockSpacingVars(data) {
+    return [
+      `--block-mt:${spaceMm(data.spaceTop)}mm`,
+      `--block-mb:${spaceMm(data.spaceBottom)}mm`
+    ].join(';');
+  }
+
   function ratio(value, fallback) {
     const raw = Number(value);
     const safe = Number.isFinite(raw) ? raw : Number(fallback || 100);
@@ -120,6 +168,9 @@
       `--block-title:${escapeHtml(title)}`,
       `--block-muted:${escapeHtml(muted)}`,
       `--block-border:${escapeHtml(border)}`,
+      `--block-title-size:${fontPx(titleBaseSize(block, data), data.titleSize)}px`,
+      `--block-text-size:${fontPx(textBaseSize(block), data.textSize)}px`,
+      `--block-line-height:${lineHeightValue(data.lineHeight)}`,
       `--button-text:${escapeHtml(pickColor(data.buttonTextColor, '#FFFFFF'))}`,
       `--button-secondary-text:${escapeHtml(pickColor(data.secondaryTextColor, accent))}`,
       `--caption-color:${escapeHtml(pickColor(data.captionColor, '#64748B'))}`,
@@ -281,7 +332,9 @@
     }
 
     const widthClass = block.type === 'custom' ? customWidthClass(data.width) : '';
-    return `<div class="block${selected}${widthClass}" role="button" tabindex="0" data-block-id="${escapeHtml(block.id)}" data-block-type="${escapeHtml(block.type)}" style="${style}">${blockMenu(block)}${html}</div>`;
+    const equalClass = block.type === 'custom' && data.equalHeight === false ? ' no-equal-height' : '';
+    const outerStyle = [style, blockSpacingVars(data)].join(';');
+    return `<div class="block${selected}${widthClass}${equalClass}" role="button" tabindex="0" data-block-id="${escapeHtml(block.id)}" data-block-type="${escapeHtml(block.type)}" style="${outerStyle}">${blockMenu(block)}${html}</div>`;
   }
 
   function header(doc) {

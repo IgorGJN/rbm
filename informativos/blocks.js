@@ -42,7 +42,12 @@
         bgKey: 'goldSoft',
         eyebrowColor: '',
         titleColor: '',
-        subtitleColor: ''
+        subtitleColor: '',
+        titleSize: 'normal',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none'
       })
     },
     title: {
@@ -54,7 +59,12 @@
         subtitle: 'Texto curto para contextualizar o conteúdo.',
         colorKey: 'gold',
         titleColor: '#0B1F33',
-        subtitleColor: '#64748B'
+        subtitleColor: '#64748B',
+        titleSize: 'normal',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none'
       })
     },
     paragraph: {
@@ -63,7 +73,11 @@
       defaultData: () => ({
         text: 'Digite o texto aqui. Evite parágrafos muito longos para manter a leitura confortável no celular e na impressão.',
         textColor: '#1E293B',
-        align: 'justify'
+        align: 'justify',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none'
       })
     },
     highlight: {
@@ -76,7 +90,12 @@
         bgKey: 'soft',
         style: 'soft',
         titleColor: '',
-        textColor: ''
+        textColor: '',
+        titleSize: 'normal',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none'
       })
     },
     institution: {
@@ -87,7 +106,12 @@
         text: 'Nossa equipe está à disposição para orientar sua empresa e manter os processos em dia.',
         bgKey: 'navy',
         titleColor: '',
-        textColor: ''
+        textColor: '',
+        titleSize: 'normal',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none'
       })
     },
     columns: {
@@ -102,6 +126,11 @@
         itemTitleColor: '',
         itemTextColor: '',
         numberColor: '#FFFFFF',
+        titleSize: 'normal',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none',
         columns: [
           { title: 'Primeiro passo', text: 'Descreva a primeira etapa.' },
           { title: 'Segundo passo', text: 'Descreva a segunda etapa.' },
@@ -119,6 +148,11 @@
         titleColor: '#0B1F33',
         itemTextColor: '',
         checkColor: '#FFFFFF',
+        titleSize: 'normal',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none',
         items: ['Item importante do informativo', 'Outra informação relevante', 'Orientação prática para o cliente']
       })
     },
@@ -130,7 +164,11 @@
         caption: '',
         height: 42,
         opacity: 100,
-        captionColor: '#64748B'
+        captionColor: '#64748B',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none'
       })
     },
     buttons: {
@@ -142,6 +180,11 @@
         titleColor: '#0B1F33',
         buttonTextColor: '#FFFFFF',
         secondaryTextColor: '',
+        titleSize: 'normal',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none',
         buttons: [
           { label: 'Quero solicitar', url: '#', style: 'primary' },
           { label: 'Tenho dúvidas', url: '#', style: 'secondary' }
@@ -176,6 +219,12 @@
         buttonColor: '#123C5A',
         buttonTextColor: '#FFFFFF',
         align: 'left',
+        titleSize: 'normal',
+        textSize: 'normal',
+        lineHeight: 'normal',
+        spaceTop: 'none',
+        spaceBottom: 'none',
+        equalHeight: true,
         padding: 5,
         radius: 14,
         borderStyle: 'normal',

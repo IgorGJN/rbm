@@ -65,3 +65,26 @@ Observações:
 - Para PDF, use o botão "Imprimir / PDF" e salve como PDF no navegador.
 - Se aparecer alerta de corte, mova conteúdo para outra página em vez de reduzir demais as fontes.
 - O novo bloco personalizado respeita a impressão A4, mas blocos lado a lado precisam de textos mais curtos para evitar corte.
+
+VERSÃO V6 - AJUSTES DE USABILIDADE
+
+Melhorias incluídas:
+- Ajustes rápidos por bloco no painel direito:
+  - espaço acima;
+  - espaço abaixo;
+  - tamanho do título;
+  - tamanho do texto;
+  - altura da linha.
+- Blocos personalizados lado a lado agora podem ficar com altura igual automaticamente.
+- O bloco personalizado ganhou painel mais compacto, dividido em:
+  - Layout;
+  - Conteúdo;
+  - Fonte;
+  - Visual.
+- Os controles principais do bloco personalizado foram transformados em botões lado a lado para reduzir a rolagem.
+- O espaçamento padrão entre blocos foi suavizado para evitar quadros muito distantes.
+
+Dica de uso:
+- Para cards lado a lado, use o Bloco personalizado com largura 50%, 1/3 ou 1/4.
+- Para aproximar ou afastar blocos, selecione o bloco e use Espaço acima / Espaço abaixo.
+- Para equilibrar cards lado a lado, deixe marcada a opção Igualar altura quando estiver lado a lado.
