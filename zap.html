@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerador de Link WhatsApp</title>
+
+  <style>
+    :root {
+      --navy: #0B1F33;
+      --blue: #123C5A;
+      --gold: #C8A24A;
+      --bg: #F4F7FA;
+      --card: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --border: #D8E0E8;
+      --success: #128C7E;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, var(--bg), #ffffff);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 620px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 14px 35px rgba(11, 31, 51, 0.08);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: white;
+      padding: 28px;
+      border-bottom: 5px solid var(--gold);
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--navy);
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(200, 162, 74, 0.18);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .hint {
+      margin-top: 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    button,
+    a.button {
+      border: 0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: 0.2s ease;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(0.95);
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: #eaf0f6;
+    }
+
+    .result {
+      margin-top: 24px;
+      padding: 18px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--gold);
+      border-radius: 14px;
+      word-break: break-all;
+    }
+
+    .result strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--navy);
+    }
+
+    .result a {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .alert {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #fff7e6;
+      border: 1px solid #f0d599;
+      color: #7a5800;
+      font-size: 15px;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 14px;
+      }
+
+      .header,
+      .content {
+        padding: 22px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <section class="header">
+      <h1>Gerador de Link WhatsApp</h1>
+      <p>Informe o número e a mensagem para gerar um link oficial do WhatsApp.</p>
+    </section>
+
+    <section class="content">
+      <div class="field">
+        <label for="numero">Número do WhatsApp</label>
+        <input 
+          type="text" 
+          id="numero" 
+          value="11977993295" 
+          placeholder="Ex: 11977993295"
+        />
+        <div class="hint">
+          Pode informar com ou sem 55. O sistema ajusta para o formato internacional.
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="mensagem">Mensagem</label>
+        <textarea id="mensagem" placeholder="Digite a mensagem que deseja deixar preenchida no WhatsApp"></textarea>
+      </div>
+
+      <div class="buttons">
+        <button class="btn-primary" onclick="gerarLink()">Gerar link</button>
+        <button class="btn-secondary" onclick="copiarLink()">Copiar link</button>
+      </div>
+
+      <div class="alert" id="alerta"></div>
+
+      <div class="result" id="resultado">
+        <strong>Link gerado:</strong>
+        <a href="https://wa.me/5511977993295" target="_blank" id="linkGerado">
+          https://wa.me/5511977993295
+        </a>
+      </div>
+
+      <div class="buttons">
+        <a 
+          href="https://wa.me/5511977993295" 
+          target="_blank" 
+          class="button btn-primary" 
+          id="botaoAbrir"
+        >
+          Abrir no WhatsApp
+        </a>
+        <button class="btn-secondary" onclick="limparMensagem()">Limpar mensagem</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function somenteNumeros(valor) {
+      return valor.replace(/\D/g, "");
+    }
+
+    function normalizarNumero(numero) {
+      let limpo = somenteNumeros(numero);
+
+      if (limpo.length === 11) {
+        limpo = "55" + limpo;
+      }
+
+      return limpo;
+    }
+
+    function mostrarAlerta(mensagem) {
+      const alerta = document.getElementById("alerta");
+      alerta.textContent = mensagem;
+      alerta.style.display = "block";
+
+      setTimeout(() => {
+        alerta.style.display = "none";
+      }, 3500);
+    }
+
+    function gerarLink() {
+      const numeroInput = document.getElementById("numero").value;
+      const mensagem = document.getElementById("mensagem").value.trim();
+
+      const numero = normalizarNumero(numeroInput);
+
+      if (!numero) {
+        mostrarAlerta("Informe um número de WhatsApp.");
+        return;
+      }
+
+      if (numero.length < 12) {
+        mostrarAlerta("Confira o número. Para o Brasil, use DDD + número. Ex: 11977993295.");
+        return;
+      }
+
+      let link = "https://wa.me/" + numero;
+
+      if (mensagem) {
+        link += "?text=" + encodeURIComponent(mensagem);
+      }
+
+      const linkGerado = document.getElementById("linkGerado");
+      const botaoAbrir = document.getElementById("botaoAbrir");
+
+      linkGerado.href = link;
+      linkGerado.textContent = link;
+      botaoAbrir.href = link;
+    }
+
+    async function copiarLink() {
+      gerarLink();
+
+      const link = document.getElementById("linkGerado").href;
+
+      try {
+        await navigator.clipboard.writeText(link);
+        mostrarAlerta("Link copiado com sucesso.");
+      } catch (erro) {
+        mostrarAlerta("Não foi possível copiar automaticamente. Selecione e copie o link manualmente.");
+      }
+    }
+
+    function limparMensagem() {
+      document.getElementById("mensagem").value = "";
+      gerarLink();
+    }
+
+    document.getElementById("numero").addEventListener("input", gerarLink);
+    document.getElementById("mensagem").addEventListener("input", gerarLink);
+
+    gerarLink();
+  </script>
+</body>
+</html>
